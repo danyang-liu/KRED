@@ -34,9 +34,9 @@ class News_embedding(nn.Module):
         type_weight = torch.FloatTensor(self.type_num, self.args.embedding_dim).cuda()
         entity_num_weight = torch.FloatTensor(entity_num, self.args.embedding_dim).cuda()
 
-        nn.init.xavier_normal(title_weight, gain=0.01)
-        nn.init.xavier_normal(type_weight, gain=0.01)
-        nn.init.xavier_normal(entity_num_weight, gain=0.01)
+        nn.init.xavier_normal_(title_weight, gain=0.01)
+        nn.init.xavier_normal_(type_weight, gain=0.01)
+        nn.init.xavier_normal_(entity_num_weight, gain=0.01)
 
         self.title_embeddings.weight = nn.Parameter(title_weight)
         self.type_embeddings.weight = nn.Parameter(type_weight)

@@ -193,10 +193,6 @@ def train_test(args, data):
         out = model(test_data['user_id'][start:end], test_data['news_id'][start:end])[task_index].view(end - start).cpu().data.numpy()
         y_pred = y_pred + out.tolist()
 
-    truth = test_data['label']
-    score = roc_auc_score(truth, y_pred)
-    print('TEST AUC:%.6f' % (score))
-
     result_path = "./result_log/" + args.logdir + '/'
     if not os.path.exists(result_path):
         os.mkdir(result_path)
