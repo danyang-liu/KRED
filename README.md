@@ -50,7 +50,7 @@ popularity prediction:
 we have the document vector and features of each entities in this document. The format of entity feature is 
 entityid, frequency, position, type of this entity and separated with space. Entities in document feature file should be included in entity2id file.
 - click_history.tsv: userid, docids
-- doc_feature.tsv: docid, entity_features, document vector
+- doc_feature.tsv: docid, entity_features, document vector (the entity features contains of entityid, position, frequency, and entity_type)
 
 ## Multi task training
 
