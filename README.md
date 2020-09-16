@@ -10,7 +10,7 @@ KRED is a knowledge enhanced framework which enhance a document embedding with k
 
 ##  Data description
 
-You need to prepare three parts of data for this experiment. We offer a toy example dataset for running the code. Each items in files
+You need to prepare three parts of data for this experiment. We offer a toy example dataset for running the code(demo_data.zip). Each items in files
  are separated with tab.
 
 1 **Graph related data**, including a graph file, an entity vector file, a relation vector file and an entity2id file.
