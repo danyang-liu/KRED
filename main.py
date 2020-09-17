@@ -9,7 +9,7 @@ def main():
     ##turning paras
     parser.add_argument('--learning_rate', action='store_true', default=0.0001, help='learning rate')
     parser.add_argument('--epoch', action='store_true', default=100, help='epoch num')
-    parser.add_argument('--batch_size', action='store_true', default=64, help='batch size')
+    parser.add_argument('--batch_size', action='store_true', default=16, help='batch size')
     parser.add_argument('--l2_regular', action='store_true', default=0.00001, help='l2 regular')
 
     ##task specific parameter

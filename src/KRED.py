@@ -7,7 +7,7 @@ class Softmax_BCELoss(nn.Module):
     def __init__(self, args):
         super(Softmax_BCELoss, self).__init__()
         self.args = args
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Softmax(dim=-1)
         self.bceloss = nn.BCELoss()
 
     def forward(self, predict, truth):
@@ -39,7 +39,7 @@ class KRED(nn.Module):
 
         self.relu = nn.ReLU(inplace=True)
         self.sigmoid = nn.Sigmoid()
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Softmax(dim=-1)
         self.mlp_layer1 = nn.Linear(2*self.args.embedding_dim, self.args.layer_dim)
         self.mlp_layer2 = nn.Linear(self.args.layer_dim, 1)
         self.cos = torch.nn.CosineSimilarity(dim=-1)
@@ -69,4 +69,4 @@ class KRED(nn.Module):
         predict_pop = self.softmax(self.pop_mlp_layer2(self.relu(self.pop_mlp_layer1(candidate_news_embedding))))
         predict_i2i = self.cos(user_embedding, candidate_news_embedding)
 
-        return predict, predict_vert, predict_local, predict_pop, predict_i2i
+        return predict.squeeze(), predict_vert.squeeze(), predict_local.squeeze(), predict_pop.squeeze(), predict_i2i.squeeze()
