@@ -71,7 +71,7 @@ def construct_user_history(user_history_file, args):
             for index in range(len(user_history)):
                 sample_user_history.append(user_history[index])
             for i in range(len(user_history),args.user_his_num):
-                sample_user_history.append('BBRsM2L')#padding zero one
+                sample_user_history.append('Doc_0')#padding zero one
             pass
         user_history_dict[userid] = sample_user_history
     return user_history_dict
