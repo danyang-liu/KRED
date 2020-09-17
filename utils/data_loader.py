@@ -46,11 +46,11 @@ def construct_embedding(entity_embedding_file, relation_embedding_file):
     fp_entity_embedding = open(entity_embedding_file, 'r', encoding='utf-8')
     fp_relation_embedding = open(relation_embedding_file, 'r', encoding='utf-8')
     for line in fp_entity_embedding:
-        linesplit = line.split('\n')[0].split('\t')[:-1]
+        linesplit = line.strip().split('\t')
         linesplit = [float(i) for i in linesplit]
         entity_embedding.append(linesplit)
     for line in fp_relation_embedding:
-        linesplit = line.split('\n')[0].split('\t')[:-1]
+        linesplit = line.strip().split('\t')
         linesplit = [float(i) for i in linesplit]
         relation_embedding.append(linesplit)
     return torch.FloatTensor(entity_embedding), torch.FloatTensor(relation_embedding)
