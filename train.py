@@ -61,7 +61,7 @@ def train_test(args, data):
             total_loss_vert = 0
             model.train()
             for step, batch in enumerate(train_dataloader_vert):
-                out = model(batch['item1'], batch['item2'])[1]
+                out = model(batch['item1'], batch['item2'], "vert_classify")[1]
                 loss = criterion(out, torch.tensor(batch['label']).cuda())
                 total_loss_vert = total_loss_vert + loss
                 optimizer.zero_grad()
@@ -72,7 +72,7 @@ def train_test(args, data):
             total_loss_local = 0
             model.train()
             for step, batch in enumerate(train_dataloader_local):
-                out = model(batch['item1'], batch['item2'])[2]
+                out = model(batch['item1'], batch['item2'], "local_news")[2]
                 loss = criterion(out, torch.tensor(batch['label']).cuda())
                 total_loss_local = total_loss_local + loss
                 optimizer.zero_grad()
@@ -83,7 +83,7 @@ def train_test(args, data):
             total_loss_pop = 0
             model.train()
             for step, batch in enumerate(train_dataloader_pop):
-                out = model(batch['item1'], batch['item2'])[3]
+                out = model(batch['item1'], batch['item2'], "pop_predict")[3]
                 loss = criterion(out, torch.tensor(batch['label']).cuda())
                 total_loss_pop = total_loss_pop + loss
                 optimizer.zero_grad()
@@ -94,7 +94,7 @@ def train_test(args, data):
             total_loss_i2i = 0
             model.train()
             for step, batch in enumerate(train_dataloader_i2i):
-                out = model(batch['item1'], batch['item2'])[4]
+                out = model(batch['item1'], batch['item2'], "item2item")[4]
                 loss = criterion(out, torch.tensor(batch['label']).cuda())
                 total_loss_i2i = total_loss_i2i + loss
                 optimizer.zero_grad()
@@ -108,7 +108,7 @@ def train_test(args, data):
             model.train()
             for step, batch in enumerate(train_dataloader_u2i):
                 batch = real_batch(batch)
-                out = model(batch['item1'], batch['item2'])[0]
+                out = model(batch['item1'], batch['item2'], "user2item")[0]
                 loss = criterion(out, torch.tensor(batch['label']).cuda())
                 total_loss_u2i = total_loss_u2i + loss
                 optimizer.zero_grad()
@@ -154,7 +154,7 @@ def train_test(args, data):
         for step, batch in enumerate(train_data_loader):
             if task_index == 0:
                 batch = real_batch(batch)
-            out = model(batch['item1'], batch['item2'])[task_index]
+            out = model(batch['item1'], batch['item2'], args.task)[task_index]
             loss = criterion(out, torch.tensor(batch['label']).cuda())
             total_loss = total_loss + loss
             optimizer.zero_grad()
@@ -170,7 +170,7 @@ def train_test(args, data):
                 end = start + args.batch_size
             else:
                 end = len(test_data['label'])
-            out = model(test_data['user_id'][start:end], test_data['news_id'][start:end])[task_index].view(end-start).cpu().data.numpy()
+            out = model(test_data['user_id'][start:end], test_data['news_id'][start:end], args.task)[task_index].view(end-start).cpu().data.numpy()
             y_pred = y_pred + out.tolist()
         truth = test_data['label']
         score = evaulate(y_pred, truth, test_data, args.task)
@@ -190,7 +190,7 @@ def train_test(args, data):
             end = start + args.batch_size
         else:
             end = len(test_data['label'])
-        out = model(test_data['user_id'][start:end], test_data['news_id'][start:end])[task_index].view(end - start).cpu().data.numpy()
+        out = model(test_data['user_id'][start:end], test_data['news_id'][start:end], args.task)[task_index].view(end - start).cpu().data.numpy()
         y_pred = y_pred + out.tolist()
 
     result_path = "./result_log/" + args.logdir + '/'

@@ -53,7 +53,7 @@ class KRED(nn.Module):
         self.pop_mlp_layer1 = nn.Linear(self.args.embedding_dim, self.args.layer_dim)
         self.pop_mlp_layer2 = nn.Linear(self.args.layer_dim, 4)
 
-    def forward(self, user_id, news_id):
+    def forward(self, user_id, news_id, task):
         user_embedding = self.user_modeling(user_id)
         candidate_news_embedding = self.news_embedding(news_id)
         if len(candidate_news_embedding.shape) > len(user_embedding.shape):
