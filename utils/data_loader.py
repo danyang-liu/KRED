@@ -191,7 +191,7 @@ def construct_multi_data(multi_data_file):
     fp_doc_feature = open(multi_data_file, 'r', encoding='utf-8')
     for line in fp_doc_feature:
         linesplit = line.split('\n')[0].split('\t')
-        user_id.append("086574D5AFCF6F9909307F25AE6D6EA8")
+        user_id.append("User_0")
         news_id.append(linesplit[0])
         label.append(int(linesplit[1]))
 
