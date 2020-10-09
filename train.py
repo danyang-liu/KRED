@@ -91,18 +91,18 @@ def train_test(args, data):
                 optimizer.step()
             print('epoch {} loss {}'.format(pretrain_epoch, total_loss_pop))
 
+            criterion = Softmax_BCELoss(args)
             total_loss_i2i = 0
             model.train()
             for step, batch in enumerate(train_dataloader_i2i):
                 out = model(batch['item1'], batch['item2'], "item2item")[4]
-                loss = criterion(out, torch.tensor(batch['label']).cuda())
+                loss = criterion(out, torch.stack(batch['label']).float().cuda())
                 total_loss_i2i = total_loss_i2i + loss
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
             print('epoch {} loss {}'.format(pretrain_epoch, total_loss_i2i))
 
-            criterion = Softmax_BCELoss(args)
             optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.l2_regular)
             total_loss_u2i = 0
             model.train()

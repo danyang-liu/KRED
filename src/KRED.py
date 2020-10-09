@@ -54,12 +54,19 @@ class KRED(nn.Module):
         self.pop_mlp_layer2 = nn.Linear(self.args.layer_dim, 4)
 
     def forward(self, user_id, news_id, task):
-        user_embedding = self.user_modeling(user_id)
-        candidate_news_embedding = self.news_embedding(news_id)
-        if len(candidate_news_embedding.shape) > len(user_embedding.shape):
-            user_embedding = torch.unsqueeze(user_embedding, 1)
-            user_embedding = user_embedding.expand(user_embedding.shape[0], candidate_news_embedding.shape[1],
+        if task == "item2item":
+            user_embedding = self.news_embedding(user_id)
+            candidate_news_embedding = self.news_embedding(news_id)
+            user_embedding = torch.unsqueeze(user_embedding, 0)
+            user_embedding = user_embedding.expand(candidate_news_embedding.shape[0], user_embedding.shape[1],
                                                    user_embedding.shape[2])
+        else:
+            user_embedding = self.user_modeling(user_id)
+            candidate_news_embedding = self.news_embedding(news_id)
+            if len(candidate_news_embedding.shape) > len(user_embedding.shape):
+                user_embedding = torch.unsqueeze(user_embedding, 1)
+                user_embedding = user_embedding.expand(user_embedding.shape[0], candidate_news_embedding.shape[1],
+                                                       user_embedding.shape[2])
 
         u_n_embedding = torch.cat([user_embedding, candidate_news_embedding], dim=(len(user_embedding.shape) - 1))
         feature_embedding = self.relu(self.mlp_layer1(u_n_embedding))
