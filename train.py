@@ -155,7 +155,7 @@ def train_test(args, data):
             if task_index == 0:
                 batch = real_batch(batch)
             # out = model(batch['item1'], batch['item2'], args.task)[task_index]
-            #loss = criterion(out, torch.tensor(batch['label']).cuda())
+            loss = criterion(out, torch.tensor(batch['label']).cuda())
             if task_index == 4:
                 out = model(batch['item1'], batch['item2'], "item2item")[4]
                 loss = criterion(out, torch.stack(batch['label']).float().cuda())
