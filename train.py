@@ -137,12 +137,12 @@ def train_test(args, data):
             test_data = user2item_test
             criterion = nn.CrossEntropyLoss()
             train_data_loader = train_dataloader_pop
-            task_index = 2
+            task_index = 3
         elif args.task == "local_news":
             test_data = user2item_test
             criterion = nn.BCELoss()
             train_data_loader = train_dataloader_local
-            task_index = 3
+            task_index = 2
         else:
             print("Error: task name error.")
             break
@@ -154,11 +154,15 @@ def train_test(args, data):
         for step, batch in enumerate(train_data_loader):
             if task_index == 0:
                 batch = real_batch(batch)
-            out = model(batch['item1'], batch['item2'], args.task)[task_index]
-            loss = criterion(out, torch.tensor(batch['label']).cuda())
             if task_index == 4:
-                out = model(batch['item1'], batch['item2'], "item2item")[4]
+                out = model(batch['item1'], batch['item2'], "item2item")[task_index]
                 loss = criterion(out, torch.stack(batch['label']).float().cuda())
+            if task_index == 2:
+                out = model(batch['item1'], batch['item2'], "local_news")[task_index]
+                loss = criterion(out, torch.tensor(batch['label']).float().cuda())
+            else:
+                out = model(batch['item1'], batch['item2'], args.task)[task_index]
+                loss = criterion(out, torch.tensor(batch['label']).cuda())
             total_loss = total_loss + loss
             optimizer.zero_grad()
             loss.backward()

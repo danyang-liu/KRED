@@ -48,7 +48,7 @@ class KRED(nn.Module):
         self.vert_mlp_layer2 = nn.Linear(self.args.layer_dim, 15)
 
         self.local_mlp_layer1 = nn.Linear(self.args.embedding_dim, self.args.layer_dim)
-        self.local_mlp_layer2 = nn.Linear(self.args.layer_dim, 2)
+        self.local_mlp_layer2 = nn.Linear(self.args.layer_dim, 1)
 
         self.pop_mlp_layer1 = nn.Linear(self.args.embedding_dim, self.args.layer_dim)
         self.pop_mlp_layer2 = nn.Linear(self.args.layer_dim, 4)
@@ -73,7 +73,7 @@ class KRED(nn.Module):
         feature_embedding = self.relu(self.mlp_layer1(u_n_embedding))
         predict = self.sigmoid(self.mlp_layer2(feature_embedding))
         predict_vert = self.softmax(self.vert_mlp_layer2(self.relu(self.vert_mlp_layer1(candidate_news_embedding))))
-        predict_local = self.softmax(self.local_mlp_layer2(self.relu(self.local_mlp_layer1(candidate_news_embedding))))
+        predict_local = self.sigmoid(self.local_mlp_layer2(self.relu(self.local_mlp_layer1(candidate_news_embedding))))
         predict_pop = self.softmax(self.pop_mlp_layer2(self.relu(self.pop_mlp_layer1(candidate_news_embedding))))
         predict_i2i = self.cos(user_embedding, candidate_news_embedding)
 

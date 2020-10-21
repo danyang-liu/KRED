@@ -91,14 +91,15 @@ def evaulate(y_pred, truth, test_data, task):
         print('ACC:%.6f F1:%.6f' % (acc, f1))
         return f1
     elif task == "local_news":
-        y_class = []
-        for list_i in y_pred:
-            list_a = list_i.tolist()
-            y_class.append(list_a.index(max(list_a)))
-        truth = test_data['label']
-        acc = accuracy_score(truth, y_class)
-        f1 = f1_score(truth, y_class, average='macro')
-        print('ACC:%.6f F1:%.6f' % (acc, f1))
+        auc = roc_auc_score(truth, y_pred)
+        for i in range(len(y_pred)):
+            if y_pred[i] > 0.2:
+                y_pred[i] = 1
+            else:
+                y_pred[i] = 0
+        acc = accuracy_score(truth, y_pred)
+        f1 = f1_score(truth, y_pred, average='macro')
+        print('ACC:%.6f AUC:%.6f F1:%.6f' % (acc, auc, f1))
         return f1
     else:
         print("task error")
