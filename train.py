@@ -124,23 +124,23 @@ def train_test(args, data):
             train_data_loader = train_dataloader_u2i
             task_index = 0
         elif args.task == "item2item":
-            test_data = user2item_test
-            criterion = nn.CrossEntropyLoss(args)
+            test_data = item2item_test
+            criterion = Softmax_BCELoss(args)
             train_data_loader = train_dataloader_i2i
             task_index = 4
         elif args.task == "vert_classify":
             test_data = user2item_test
-            criterion = nn.CrossEntropyLoss(args)
+            criterion = nn.CrossEntropyLoss()
             train_data_loader = train_dataloader_vert
             task_index = 1
         elif args.task == "pop_predict":
             test_data = user2item_test
-            criterion = nn.CrossEntropyLoss(args)
+            criterion = nn.CrossEntropyLoss()
             train_data_loader = train_dataloader_pop
             task_index = 2
         elif args.task == "local_news":
             test_data = user2item_test
-            criterion = nn.CrossEntropyLoss(args)
+            criterion = nn.BCELoss()
             train_data_loader = train_dataloader_local
             task_index = 3
         else:
@@ -154,8 +154,11 @@ def train_test(args, data):
         for step, batch in enumerate(train_data_loader):
             if task_index == 0:
                 batch = real_batch(batch)
-            out = model(batch['item1'], batch['item2'], args.task)[task_index]
-            loss = criterion(out, torch.tensor(batch['label']).cuda())
+            # out = model(batch['item1'], batch['item2'], args.task)[task_index]
+            #loss = criterion(out, torch.tensor(batch['label']).cuda())
+            if task_index == 4:
+                out = model(batch['item1'], batch['item2'], "item2item")[4]
+                loss = criterion(out, torch.stack(batch['label']).float().cuda())
             total_loss = total_loss + loss
             optimizer.zero_grad()
             loss.backward()
@@ -170,8 +173,12 @@ def train_test(args, data):
                 end = start + args.batch_size
             else:
                 end = len(test_data['label'])
-            out = model(test_data['user_id'][start:end], test_data['news_id'][start:end], args.task)[task_index].view(end-start).cpu().data.numpy()
-            y_pred = y_pred + out.tolist()
+            #out = model(test_data['user_id'][start:end], test_data['news_id'][start:end], args.task)[task_index].view(end-start).cpu().data.numpy()
+            #test = model(test_data['user_id'][start:end], test_data['news_id'][start:end], args.task)[task_index].cpu().data.numpy()
+            out = model(test_data['user_id'][start:end], test_data['news_id'][start:end], args.task)[task_index].cpu().data.numpy()
+
+            #y_pred = y_pred + out.tolist()
+            y_pred.extend(out)
         truth = test_data['label']
         score = evaulate(y_pred, truth, test_data, args.task)
         valid_scores.append(score)
@@ -190,8 +197,11 @@ def train_test(args, data):
             end = start + args.batch_size
         else:
             end = len(test_data['label'])
-        out = model(test_data['user_id'][start:end], test_data['news_id'][start:end], args.task)[task_index].view(end - start).cpu().data.numpy()
-        y_pred = y_pred + out.tolist()
+        #out = model(test_data['user_id'][start:end], test_data['news_id'][start:end], args.task)[task_index].view(end - start).cpu().data.numpy()
+        out = model(test_data['user_id'][start:end], test_data['news_id'][start:end], args.task)[
+            task_index].cpu().data.numpy()
+        #y_pred = y_pred + out.tolist()
+        y_pred.extend(out)
 
     result_path = "./result_log/" + args.logdir + '/'
     if not os.path.exists(result_path):

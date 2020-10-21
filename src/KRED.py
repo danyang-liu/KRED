@@ -57,8 +57,9 @@ class KRED(nn.Module):
         if task == "item2item":
             user_embedding = self.news_embedding(user_id)
             candidate_news_embedding = self.news_embedding(news_id)
-            user_embedding = torch.unsqueeze(user_embedding, 0)
-            user_embedding = user_embedding.expand(candidate_news_embedding.shape[0], user_embedding.shape[1],
+            if len(candidate_news_embedding.shape) != len(user_embedding.shape):
+                user_embedding = torch.unsqueeze(user_embedding, 0)
+                user_embedding = user_embedding.expand(candidate_news_embedding.shape[0], user_embedding.shape[1],
                                                    user_embedding.shape[2])
         else:
             user_embedding = self.user_modeling(user_id)
