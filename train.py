@@ -157,7 +157,7 @@ def train_test(args, data):
             if task_index == 4:
                 out = model(batch['item1'], batch['item2'], "item2item")[task_index]
                 loss = criterion(out, torch.stack(batch['label']).float().cuda())
-            if task_index == 2:
+            elif task_index == 2:
                 out = model(batch['item1'], batch['item2'], "local_news")[task_index]
                 loss = criterion(out, torch.tensor(batch['label']).float().cuda())
             else:
