@@ -69,17 +69,6 @@ def train_test(args, data):
                 optimizer.step()
             print('epoch {} loss {}'.format(pretrain_epoch, total_loss_vert))
 
-            total_loss_local = 0
-            model.train()
-            for step, batch in enumerate(train_dataloader_local):
-                out = model(batch['item1'], batch['item2'], "local_news")[2]
-                loss = criterion(out, torch.tensor(batch['label']).cuda())
-                total_loss_local = total_loss_local + loss
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-            print('epoch {} loss {}'.format(pretrain_epoch, total_loss_local))
-
             total_loss_pop = 0
             model.train()
             for step, batch in enumerate(train_dataloader_pop):
@@ -90,6 +79,18 @@ def train_test(args, data):
                 loss.backward()
                 optimizer.step()
             print('epoch {} loss {}'.format(pretrain_epoch, total_loss_pop))
+
+            criterion = nn.BCELoss()
+            total_loss_local = 0
+            model.train()
+            for step, batch in enumerate(train_dataloader_local):
+                out = model(batch['item1'], batch['item2'], "local_news")[2]
+                loss = criterion(out, torch.tensor(batch['label']).float().cuda())
+                total_loss_local = total_loss_local + loss
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+            print('epoch {} loss {}'.format(pretrain_epoch, total_loss_local))
 
             criterion = Softmax_BCELoss(args)
             total_loss_i2i = 0

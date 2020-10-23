@@ -84,7 +84,7 @@ def construct_doc_feature(doc_feature_file, entity2id_file, news_entity_num):
     type_num =0
     fp_entity2id = open(entity2id_file, 'r', encoding='utf-8')
     entity_dict = {}
-    entity_num = int(fp_entity2id.readline().split('\n')[0])
+    entity_num_all = int(fp_entity2id.readline().split('\n')[0])
     lines = fp_entity2id.readlines()
     for line in lines:
         entity, entityid = line.strip().split('\t')
