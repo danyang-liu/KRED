@@ -260,31 +260,32 @@ def real_batch(batch):
 
 def load_data(args):
 
-    graph_file = args.rootpath+"news_graph/triple2id.txt"
-    entity2id_file = args.rootpath+"news_graph/entity2id.txt"
+    graph_file = args.rootpath+"graph_demo.tsv"
+    entity2id_file = args.rootpath+"entity2id.txt"
     entity_adj, relation_adj = construct_adj(graph_file, entity2id_file, args)
 
-    entity_embedding_file = args.rootpath+ "news_graph/entity2vec.vec"
-    relation_embedding_file = args.rootpath + "news_graph/relation2vec.vec"
+    entity_embedding_file = args.rootpath+ "entity2vec.vec"
+    relation_embedding_file = args.rootpath + "relation2vec.vec"
     entity_embedding, relation_embedding = construct_embedding(entity_embedding_file, relation_embedding_file)
 
-    user_history_file = args.rootpath + "user_history.tsv"
+    user_history_file = args.rootpath + "user_history_demo.tsv"
     user_history_dict = construct_user_history(user_history_file, args)
 
-    train_data = construct_train(args.rootpath +"u2i_train.tsv", args)
-    test_data = construct_test(args.rootpath  + "u2i_test.tsv")
+    train_data = construct_train(args.rootpath +"u2i_train_demo.tsv", args)
+    test_data = construct_test(args.rootpath  + "u2i_test_demo.tsv")
 
-    doc_feature_file = args.rootpath + "doc_feature_train_test_new.tsv"
+    doc_feature_file = args.rootpath + "doc_feature_demo.tsv"
     doc_feature_dict, entity_num, position_num, type_num = construct_doc_feature(doc_feature_file, entity2id_file, args.news_entity_num)
 
-    vert_train = construct_multi_data(args.rootpath + "vert_train.tsv")
-    vert_test = construct_multi_data(args.rootpath + "vert_test.tsv")
-    local_train = construct_multi_data(args.rootpath + "local_train.tsv")
-    local_test = construct_multi_data(args.rootpath + "local_test.tsv")
-    pop_train = construct_multi_data(args.rootpath + "pop_train.tsv")
-    pop_test = construct_multi_data(args.rootpath + "pop_test.tsv")
-    item2item_train_data = construct_item2item_train(args.rootpath + "i2i_train.tsv")
-    item2item_test_data = construct_item2item_test(args.rootpath + "i2i_test.tsv")
+    vert_train = construct_multi_data(args.rootpath + "vert_train_demo.tsv")
+    vert_test = construct_multi_data(args.rootpath + "vert_test_demo.tsv")
+    local_train = construct_multi_data(args.rootpath + "local_train_demo.tsv")
+    local_test = construct_multi_data(args.rootpath + "local_test_demo.tsv")
+    pop_train = construct_multi_data(args.rootpath + "pop_train_demo.tsv")
+    pop_test = construct_multi_data(args.rootpath + "pop_test_demo.tsv")
+    item2item_train_data = construct_item2item_train(args.rootpath + "i2i_train_demo.tsv")
+    item2item_test_data = construct_item2item_test(args.rootpath + "i2i_test_demo.tsv")
+
 
 
     print('constructing data finishced ...')
