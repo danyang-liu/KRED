@@ -28,7 +28,7 @@ def construct_adj(graph_file, entity2id_file, args):#graph is triple
     entity_num = int(fp_entity2id.readline().split('\n')[0])
     entity_adj = []
     relation_adj = []
-    for i in range(entity_num):
+    for i in range(entity_num+1):
         entity_adj.append([])
         relation_adj.append([])
     for key in kg.keys():
