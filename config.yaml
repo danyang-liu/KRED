@@ -1,0 +1,46 @@
+name: "KRED"
+n_gpu: 1
+data_loader:
+    batch_size: 64
+    shuffle: true
+    num_workers: 1
+
+data:
+  train_news : "./data/train/news.tsv"
+  train_behavior : "./data/train/behaviors.tsv"
+  valid_news : "./data/valid/news.tsv"
+  valid_behavior : "./data/valid/behaviors.tsv"
+  knowledge_graph : "./data/kg/wikidata-graph/triple2id.txt"
+  entity_embedding : "./data/kg/wikidata-graph/entity2vecd100.vec"
+  relation_embedding : "./data/kg/wikidata-graph/relation2vecd100.vec"
+  entity_index : "./data/kg/wikidata-graph/entity2id.txt"
+  relation_index : "./data/kg/wikidata-graph/realtion2id.txt"
+
+
+model:
+  document_embedding_dim: 768
+  embedding_dim: 128
+  news_entity_num: 20
+  entity_neighbor_num: 20
+  entity_embedding_dim: 100
+  layer_dim: 128
+  user_his_num: 20
+
+
+trainer:
+  training_type: "single_task" # single_task or multi-task
+  task: "user2item" # task should be within: user2item, item2item, vert_classify, pop_predict
+  epochs: 100
+  smooth_lamda: 10
+  train_neg_num: 4
+  save_dir: "./out/saved/"
+  save_period: 1
+  early_stop: 3
+  monitor: "val_auc"
+  verbosity: 2
+
+optimizer:
+  type: "Adam"
+  lr: 0.00002
+  weight_decay: 0.000001
+  amsgrad: true

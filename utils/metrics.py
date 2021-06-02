@@ -44,7 +44,7 @@ def cal_ndcg_float(truth, preds, topk):
     ndcg = dcg/idcg
     return ndcg
 
-def evaulate(y_pred, truth, test_data, task):
+def evaluate(y_pred, truth, test_data, task):
     if task == "user2item":
         score = roc_auc_score(truth, y_pred)
         sess_id = test_data['session_id']
