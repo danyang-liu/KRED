@@ -5,33 +5,33 @@ from KGAT import KGAT
 
 class News_embedding(nn.Module):
 
-    def __init__(self, args, doc_feature_dict, entity_embedding, relation_embedding, adj_entity, adj_relation, entity_num, position_num, type_num):
+    def __init__(self, config, doc_feature_dict, entity_embedding, relation_embedding, adj_entity, adj_relation, entity_num, position_num, type_num):
         super(News_embedding, self).__init__()
-        self.args = args
+        self.args = config
         self.doc_feature_dict = doc_feature_dict
         self.adj_entity = adj_entity
         self.adj_relation = adj_relation
-        self.kgat = KGAT(args, doc_feature_dict, entity_embedding, relation_embedding, adj_entity, adj_relation)
+        self.kgat = KGAT(config, doc_feature_dict, entity_embedding, relation_embedding, adj_entity, adj_relation)
 
         self.entity_num = entity_num
         self.position_num = position_num
         self.type_num = type_num
 
-        self.final_embedding1 = nn.Linear(self.args.document_embedding_dim+self.args.entity_embedding_dim,self.args.layer_dim)
-        self.final_embedding2 = nn.Linear(self.args.layer_dim,
-                                          self.args.embedding_dim)
+        self.final_embedding1 = nn.Linear(self.config['model']['document_embedding_dim']+ self.config['model']['embedding_dim'], self.config['model']['layer_dim'])
+        self.final_embedding2 = nn.Linear(self.config['model']['layer_dim'],
+                                          self.config['model']['embedding_dim'])
         self.relu = nn.ReLU(inplace=True)
         self.sigmoid = nn.Sigmoid()
         self.tanh = nn.Tanh()
 
-        self.title_embeddings = nn.Embedding(1000, self.args.entity_embedding_dim)
-        self.type_embeddings = nn.Embedding(type_num, self.args.entity_embedding_dim)
-        self.entity_num_embeddings = nn.Embedding(entity_num, self.args.entity_embedding_dim)
+        self.title_embeddings = nn.Embedding(1000, self.config['model']['entity_embedding_dim'])
+        self.type_embeddings = nn.Embedding(type_num, self.config['model']['entity_embedding_dim'])
+        self.entity_num_embeddings = nn.Embedding(entity_num, self.config['model']['entity_embedding_dim'])
 
         # Use xavier initialization method to initialize embeddings of entities and relations
-        title_weight = torch.FloatTensor(1000, self.args.entity_embedding_dim)
-        type_weight = torch.FloatTensor(self.type_num, self.args.entity_embedding_dim)
-        entity_num_weight = torch.FloatTensor(entity_num, self.args.entity_embedding_dim)
+        title_weight = torch.FloatTensor(1000, self.config['model']['entity_embedding_dim'])
+        type_weight = torch.FloatTensor(self.type_num, self.config['model']['entity_embedding_dim'])
+        entity_num_weight = torch.FloatTensor(entity_num, self.config['model']['entity_embedding_dim'])
 
         nn.init.xavier_normal_(title_weight, gain=0.01)
         nn.init.xavier_normal_(type_weight, gain=0.01)
@@ -41,8 +41,8 @@ class News_embedding(nn.Module):
         self.type_embeddings.weight = nn.Parameter(type_weight)
         self.entity_num_embeddings.weight = nn.Parameter(entity_num_weight)
 
-        self.attention_embedding_layer1 = nn.Linear(self.args.document_embedding_dim+self.args.entity_embedding_dim,self.args.layer_dim)
-        self.attention_embedding_layer2 = nn.Linear(self.args.layer_dim,1)
+        self.attention_embedding_layer1 = nn.Linear(self.config['model']['document_embedding_dim']+ self.config['model']['embedding_dim'],self.config['model']['layer_dim'])
+        self.attention_embedding_layer2 = nn.Linear(self.config['model']['layer_dim'],1)
         self.softmax = nn.Softmax(dim=-2)
 
 

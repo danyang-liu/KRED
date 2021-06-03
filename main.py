@@ -1,5 +1,4 @@
 import argparse
-from data_loader.data_loaders import *
 from train_test import *
 from utils.util import *
 import pickle
