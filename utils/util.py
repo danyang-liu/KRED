@@ -467,7 +467,6 @@ def build_vert_data(config):
     return vert_train, vert_dev
 
 def build_pop_data(config):
-    #todo
     fp_train = open(config['data']['train_behavior'], 'r', encoding='utf-8')
     news_imp_dict = {}
     pop_train = {}
@@ -491,7 +490,6 @@ def build_pop_data(config):
     return pop_train, pop_test
 
 def build_item2item_data(config):
-    #todo
     fp_train = open(config['data']['train_behavior'], 'r', encoding='utf-8')
     item2item_train = {}
     item2item_test = {}
