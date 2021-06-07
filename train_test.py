@@ -17,7 +17,7 @@ class NewsDataset(Dataset):
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        sample = {'item1': self.dic_data['user_id'][idx], 'item2': self.dic_data['news_id'][idx], 'label': self.dic_data['label'][idx]}
+        sample = {'item1': self.dic_data['item1'][idx], 'item2': self.dic_data['item2'][idx], 'label': self.dic_data['label'][idx]}
         return sample
 
 def multi_task_training(config, data):

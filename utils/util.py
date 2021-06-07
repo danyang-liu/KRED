@@ -493,41 +493,97 @@ def build_item2item_data(config):
     fp_train = open(config['data']['train_behavior'], 'r', encoding='utf-8')
     item2item_train = {}
     item2item_test = {}
+    item1_train = []
+    item2_train = []
+    label_train = []
+    item1_dev = []
+    item2_dev = []
+    label_dev = []
+    user_history_dict = {}
     news_click_dict = {}
-    news_pair_dict = {}
+    doc_doc_dict = {}
     all_news_set = set()
     for line in fp_train:
         index, userid, imp_time, history, behavior = line.strip().split('\t')
         behavior = behavior.split(' ')
+        if userid not in user_history_dict:
+            user_history_dict[userid] = set()
         for news in behavior:
-            positive_list = []
             newsid, news_label = news.split('-')
             all_news_set.add(newsid)
             if news_label == "1":
-                positive_list.append(newsid)
+                user_history_dict[userid].add(newsid)
                 if newsid not in news_click_dict:
                     news_click_dict[newsid] = 1
                 else:
                     news_click_dict[newsid] = news_click_dict[newsid] + 1
         news = history.split(' ')
-        positive_list = []
         for newsid in news:
-            positive_list.append(newsid)
+            user_history_dict[userid].add(newsid)
             if newsid not in news_click_dict:
                 news_click_dict[newsid] = 1
             else:
                 news_click_dict[newsid] = news_click_dict[newsid] + 1
-        if len(positive_list) >= 2:
-            for i in range(len(positive_list) - 1):
-                for j in range(i, len(positive_list)):
-                    if (positive_list[i], positive_list[j]) not in news_pair_dict and (
-                    positive_list[j], positive_list[i]) not in news_pair_dict:
-                        news_pair_dict[(positive_list[i], positive_list[j])] = 1
-                    elif (positive_list[i], positive_list[j]) in news_pair_dict:
-                        news_pair_dict[(positive_list[i], positive_list[j])] = news_pair_dict[(
-                        positive_list[i], positive_list[j])] + 1
-                    else:
-                        news_pair_dict[(positive_list[j], positive_list[i])] = news_pair_dict[(positive_list[j], positive_list[i])] + 1
+    for user in user_history_dict:
+        list_user_his = list(user_history_dict[user])
+        for i in range(len(list_user_his) - 1):
+            for j in range(i + 1, len(list_user_his)):
+                doc1 = list_user_his[i]
+                doc2 = list_user_his[j]
+                if doc1 != doc2:
+                    if (doc1, doc2) not in doc_doc_dict and (doc2, doc1) not in doc_doc_dict:
+                        doc_doc_dict[(doc1, doc2)] = 1
+                    elif (doc1, doc2) in doc_doc_dict and (doc2, doc1) not in doc_doc_dict:
+                        doc_doc_dict[(doc1, doc2)] = doc_doc_dict[(doc1, doc2)] + 1
+                    elif (doc2, doc1) in doc_doc_dict and (doc1, doc2) not in doc_doc_dict:
+                        doc_doc_dict[(doc2, doc1)] = doc_doc_dict[(doc2, doc1)] + 1
+    weight_doc_doc_dict = {}
+    for item in doc_doc_dict:
+        if item[0] in news_click_dict and item[1] in news_click_dict:
+            weight_doc_doc_dict[item] = doc_doc_dict[item] / math.sqrt(
+                news_click_dict[item[0]] * news_click_dict[item[1]])
+
+    THRED_CLICK_TIME = 10
+    freq_news_set = set()
+    for news in news_click_dict:
+        if news_click_dict[news] > THRED_CLICK_TIME:
+            freq_news_set.add(news)
+    news_pair_thred_w_dict = {}  # {(new1, news2): click_weight}
+    for item in weight_doc_doc_dict:
+        if item[0] in freq_news_set and item[1] in freq_news_set:
+            news_pair_thred_w_dict[item] = weight_doc_doc_dict[item]
+
+    news_positive_pairs = []
+    for item in news_pair_thred_w_dict:
+        if news_pair_thred_w_dict[item] > 0.05:
+            news_positive_pairs.append(item)
+
+    for item in news_positive_pairs:
+        random_num = random.random()
+        if random_num < 0.8:
+            item1_train.append(item[0])
+            item2_train.append(item[1])
+            label_train.append(1)
+            negative_list = random.sample(list(freq_news_set), 4)
+            for negative in negative_list:
+                item1_train.append(item[0])
+                item2_train.append(negative)
+                label_train.append(0)
+        else:
+            item1_dev.append(item[0])
+            item2_dev.append(item[1])
+            label_dev.append(1)
+            negative_list = random.sample(list(freq_news_set), 4)
+            for negative in negative_list:
+                item1_train.append(item[0])
+                item2_train.append(negative)
+                label_dev.append(0)
+    item2item_train["item1"] = item1_train
+    item2item_train["item2"] = item2_train
+    item2item_train["label"] = label_train
+    item2item_test["item1"] = item1_dev
+    item2item_test["item2"] = item2_dev
+    item2item_test["label"] = label_dev
     return item2item_train, item2item_test
 
 def load_data_mind(config):

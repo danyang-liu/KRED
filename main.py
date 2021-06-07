@@ -4,6 +4,7 @@ from utils.util import *
 import pickle
 from parse_config import ConfigParser
 
+import os
 
 def main(config):
     #data = load_data_mind(config)

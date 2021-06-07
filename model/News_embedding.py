@@ -7,7 +7,7 @@ class News_embedding(nn.Module):
 
     def __init__(self, config, doc_feature_dict, entity_embedding, relation_embedding, adj_entity, adj_relation, entity_num, position_num, type_num):
         super(News_embedding, self).__init__()
-        self.args = config
+        self.config = config
         self.doc_feature_dict = doc_feature_dict
         self.adj_entity = adj_entity
         self.adj_relation = adj_relation
@@ -92,7 +92,7 @@ class News_embedding(nn.Module):
                     entities_nums[-1].append(self.doc_feature_dict[news_i][1])
         return entities_nums
 
-    def get_istitles(self, news_id):
+    def get_position(self, news_id):
         istitles = []
         for news in news_id:
             if type(news) == str:
@@ -142,7 +142,7 @@ class News_embedding(nn.Module):
     def forward(self, news_id):
         entities = self.get_entities_ids(news_id)
         entity_nums = self.get_entities_nums(news_id)
-        istitle = self.get_istitles(news_id)
+        istitle = self.get_position(news_id)
         type = self.get_type(news_id)
         context_vecs = self.get_context_vector(news_id)
 
