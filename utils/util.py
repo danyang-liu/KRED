@@ -286,10 +286,10 @@ def get_user2item_data(config):
             user_id.append(userid+ "_dev")
             if news_label == "1":
                 news_id.append(newsid)
-                label.append(1)
+                label.append(1.0)
             else:
                 news_id.append(newsid)
-                label.append(0)
+                label.append(0.0)
 
     dev_data['item1'] = user_id
     dev_data['session_id'] = session_id
@@ -309,6 +309,9 @@ def build_user_history(config):
             user_history_dict[user_id + "_train"] = history.split(' ')
             for i in range(config['model']['user_his_num']-len(history.split(' '))):
                 user_history_dict[user_id + "_train"].append("N0")
+            if user_history_dict[user_id + "_train"][0] == '':
+                user_history_dict[user_id + "_train"][0] = 'N0'
+
     fp_dev_behavior = open(config['data']['valid_behavior'], 'r', encoding='utf-8')
     for line in fp_dev_behavior:
         index, user_id, imp_time, history, behavior = line.strip().split('\t')
@@ -318,6 +321,8 @@ def build_user_history(config):
             user_history_dict[user_id + "_dev"] = history.split(' ')
             for i in range(config['model']['user_his_num']-len(history.split(' '))):
                 user_history_dict[user_id + "_dev"].append("N0")
+            if user_history_dict[user_id + "_dev"][0] == '':
+                user_history_dict[user_id + "_dev"][0] = 'N0'
     return user_history_dict
 
 def build_news_features_mind(config):
@@ -368,9 +373,23 @@ def build_news_features_mind(config):
         for entity in news_entity_feature:
             if entity in entity2id_dict:
                 news_entity_feature_list.append([entity2id_dict[entity], news_entity_feature[entity][0], news_entity_feature[entity][1], news_entity_feature[entity][2]])
-        news_entity_feature_list.append([0,0,0,0])
-        news_features[news] = (sentence_embedding, news_entity_feature_list)
-    news_features["N0"] = (np.zeros(config['model']['document_embedding_dim']), [[0,0,0,0]])
+        news_entity_feature_list.append([0, 0, 0, 0])
+        if len(news_entity_feature_list) > config['model']['news_entity_num']:
+            news_entity_feature_list = news_entity_feature_list[:config['model']['news_entity_num']]
+        else:
+            for i in range(len(news_entity_feature_list), config['model']['news_entity_num']):
+                news_entity_feature_list.append([0, 0, 0, 0])
+        news_feature_list_ins = [[],[],[],[],[]]
+        for i in range(len(news_entity_feature_list)):
+            for j in range(4):
+                news_feature_list_ins[j].append(news_entity_feature_list[i][j])
+        news_feature_list_ins[4] = sentence_embedding
+        news_features[news] = news_feature_list_ins
+    news_features["N0"] = [[],[],[],[],[]]
+    for i in range(config['model']['news_entity_num']):
+        for j in range(4):
+            news_features["N0"][j].append(0)
+    news_features["N0"][4] = np.zeros(config['model']['document_embedding_dim'])
     return news_features, 100, 10, 100
 
 def construct_adj_mind(config):#graph is triple
@@ -397,9 +416,12 @@ def construct_adj_mind(config):#graph is triple
     entity_num = int(fp_entity2id.readline().split('\n')[0])+1
     entity_adj = []
     relation_adj = []
-    for i in range(entity_num):
+    for i in range(entity_num+1):
         entity_adj.append([])
         relation_adj.append([])
+    for i in range(config['model']['entity_neighbor_num']):
+        entity_adj[0].append(0)
+        relation_adj[0].append(0)
     for key in kg.keys():
         for index in range(config['model']['entity_neighbor_num']):
             i = random.randint(0,len(kg[key])-1)
@@ -587,13 +609,14 @@ def build_item2item_data(config):
     return item2item_train, item2item_test
 
 def load_data_mind(config):
-    user_history = build_user_history(config)
-
-    entity_embedding, relation_embedding = construct_embedding_mind(config)
 
     entity_adj, relation_adj = construct_adj_mind(config)
 
     news_feature, max_entity_freq, max_entity_pos, max_entity_type = build_news_features_mind(config)
+
+    user_history = build_user_history(config)
+
+    entity_embedding, relation_embedding = construct_embedding_mind(config)
 
     if config['trainer']['training_type'] == "multi-task":
         train_data, dev_data = get_user2item_data(config)

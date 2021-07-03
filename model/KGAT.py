@@ -13,11 +13,11 @@ class KGAT(BaseModel):
         self.adj_relation = adj_relation
         self.entity_embedding = entity_embedding
         self.relation_embedding = relation_embedding
-        self.attention_layer1 = nn.Linear(3*self.config['model']['embedding_dim'],self.config['model']['layer_dim'])
+        self.attention_layer1 = nn.Linear(3*self.config['model']['entity_embedding_dim'],self.config['model']['layer_dim'])
         self.attention_layer2 = nn.Linear(self.config['model']['layer_dim'], 1)
         self.softmax = nn.Softmax(dim=-1)
         self.relu = nn.ReLU(inplace=True)
-        self.convolve_layer = nn.Linear(2*self.config['model']['embedding_dim'],self.config['model']['embedding_dim'])
+        self.convolve_layer = nn.Linear(2*self.config['model']['entity_embedding_dim'],self.config['model']['entity_embedding_dim'])
 
     def get_neighbors(self, entities):
         neighbor_entities = []

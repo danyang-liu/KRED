@@ -41,7 +41,7 @@ class News_embedding(nn.Module):
         self.type_embeddings.weight = nn.Parameter(type_weight)
         self.entity_num_embeddings.weight = nn.Parameter(entity_num_weight)
 
-        self.attention_embedding_layer1 = nn.Linear(self.config['model']['document_embedding_dim']+ self.config['model']['embedding_dim'],self.config['model']['layer_dim'])
+        self.attention_embedding_layer1 = nn.Linear(self.config['model']['document_embedding_dim']+ self.config['model']['entity_embedding_dim'],self.config['model']['layer_dim'])
         self.attention_embedding_layer2 = nn.Linear(self.config['model']['layer_dim'],1)
         self.softmax = nn.Softmax(dim=-2)
 
