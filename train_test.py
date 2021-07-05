@@ -115,7 +115,7 @@ def multi_task_training(config, data):
     else:
         print("Error: task name error.")
 
-    trainer = Trainer(config, model, criterion, optimizer, device, train_data_loader, data)
+    trainer = Trainer(config, model, criterion, optimizer, device, train_data_loader, data[-1])
     trainer.train()
 
 
@@ -164,7 +164,7 @@ def single_task_training(config, data):
 
     optimizer = optim.Adam(model.parameters(), lr=config['optimizer']['lr'], weight_decay=0)
 
-    trainer = Trainer(config, model, criterion, optimizer, device, train_data_loader, data)
+    trainer = Trainer(config, model, criterion, optimizer, device, train_data_loader, data[-1])
     trainer.train()
 
 

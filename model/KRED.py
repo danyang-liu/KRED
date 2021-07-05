@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 from News_embedding import News_embedding
 from User_modeling import User_modeling
-from data_loader import *
 from utils.metrics import *
 
 class Softmax_BCELoss(nn.Module):

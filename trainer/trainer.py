@@ -51,7 +51,7 @@ class Trainer(BaseTrainer):
         for step, batch in enumerate(self.train_dataloader):
             batch = real_batch(batch)
             out = self.model(batch['item1'], batch['item2'], self.config['trainer']['task'])[0]
-            loss = self.criterion(out, torch.tensor(batch['label']).cuda())
+            loss = self.criterion(out, torch.FloatTensor(batch['label']).cuda())
             all_loss = all_loss + loss
             self.optimizer.zero_grad()
             loss.backward()
@@ -69,13 +69,13 @@ class Trainer(BaseTrainer):
         """
         self.model.eval()
         y_pred = []
-        start_list = list(range(0, len(self.test_data['label']), self.config['data_loader']['batch_size']))
+        start_list = list(range(0, len(self.test_data['label']), int(self.config['data_loader']['batch_size'])))
         for start in start_list:
-            if start + self.config['data_loader']['batch_size'] <= len(self.test_data['label']):
-                end = start + self.config['data_loader']['batch_size']
+            if start + int(self.config['data_loader']['batch_size']) <= len(self.test_data['label']):
+                end = start + int(self.config['data_loader']['batch_size'])
             else:
                 end = len(self.test_data['label'])
-            out = self.model(self.test_data['user_id'][start:end], self.test_data['news_id'][start:end], self.config['trainer']['task'])[
+            out = self.model(self.test_data['item1'][start:end], self.test_data['item2'][start:end], self.config['trainer']['task'])[
                 0].cpu().data.numpy()
 
             y_pred.extend(out)
