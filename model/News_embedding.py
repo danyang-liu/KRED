@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from KGAT import KGAT
+from model.KGAT import KGAT
 
 
 class News_embedding(nn.Module):

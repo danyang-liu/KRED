@@ -3,7 +3,7 @@ from model.KRED import Softmax_BCELoss
 import torch
 from torch import optim, nn
 from trainer.trainer import Trainer
-from data_loader import *
+from base.base_data_loader import *
 from torch.utils.data import Dataset, DataLoader, RandomSampler
 from utils.metrics import *
 from utils.util import *
