@@ -80,7 +80,7 @@ class Trainer(BaseTrainer):
 
             y_pred.extend(out)
         truth = self.test_data['label']
-        auc_score = cal_auc(y_pred, truth)
+        auc_score = cal_auc(truth, y_pred) # had to switch input parameters for it to work
         print("auc socre: " + str(auc_score))
         return auc_score
 

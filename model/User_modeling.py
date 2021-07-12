@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from News_embedding import News_embedding
+from model.News_embedding import News_embedding
 
 
 class User_modeling(nn.Module):

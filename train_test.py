@@ -3,7 +3,7 @@ from model.KRED import Softmax_BCELoss
 import torch
 from torch import optim, nn
 from trainer.trainer import Trainer
-from data_loader import *
+from base.base_data_loader import *
 from torch.utils.data import Dataset, DataLoader, RandomSampler
 from utils.metrics import *
 from utils.util import *
@@ -186,7 +186,8 @@ def testing(test_data, config):
             end = start + config['data_loader']['batch_size']
         else:
             end = len(test_data['label'])
-        out = model(test_data['user_id'][start:end], test_data['news_id'][start:end], config['data_loader']['batch_size'])[
+        # had to change 'user_id' to 'item1' and 'news_id' to 'item2' according to key declarations in utils.util load_data_mind function
+        out = model(test_data['item1'][start:end], test_data['item2'][start:end], config['data_loader']['batch_size'])[
             task_index].cpu().data.numpy()
 
         y_pred.extend(out)
